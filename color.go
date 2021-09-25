@@ -1,13 +1,50 @@
 package main
 
-import "image"
+import (
+	"image"
+	"log"
+)
+
+func CompositeRGBA(r, g, b, a image.Image) *image.RGBA {
+
+	rectR, rectG, rectB, rectA := r.Bounds(), g.Bounds(), b.Bounds(), a.Bounds()
+	if rectR != rectG || rectG != rectB || rectB != rectA {
+		log.Fatalln("r, g, b, a all must be same size")
+		return nil
+	}
+
+	rgba := image.NewRGBA(rectR)
+	bytes := rgba.Pix
+	for i, p := range r.(*image.Gray).Pix {
+		bytes[i*4] = p
+	}
+	for i, p := range g.(*image.Gray).Pix {
+		bytes[i*4+1] = p
+	}
+	for i, p := range b.(*image.Gray).Pix {
+		bytes[i*4+2] = p
+	}
+	for i, p := range a.(*image.Gray).Pix {
+		bytes[i*4+3] = p
+	}
+	return rgba
+}
 
 func SplitRGBA(img image.Image) (r, g, b, a *image.Gray) {
-	rect := img.Bounds()
-	rgba := ROIrgba(img, rect.Min.X, rect.Min.Y, rect.Max.X, rect.Max.Y)
-	r, g, b, a = image.NewGray(rect), image.NewGray(rect), image.NewGray(rect), image.NewGray(rect)
 
-	for i, p := range rgba.Pix {
+	rect := img.Bounds()
+	var bytes []byte
+	switch pImg := img.(type) {
+	case *image.RGBA:
+		bytes = pImg.Pix
+	case *image.NRGBA:
+		bytes = pImg.Pix
+	default:
+		log.Fatalf("[%v] is not support", pImg)
+	}
+
+	r, g, b, a = image.NewGray(rect), image.NewGray(rect), image.NewGray(rect), image.NewGray(rect)
+	for i, p := range bytes {
 		switch i % 4 {
 		case 0:
 			r.Pix[i/4] = p
