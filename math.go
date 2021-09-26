@@ -6,6 +6,13 @@ import (
 	"github.com/digisan/gotk/slice/tu8i"
 )
 
+func abs(a int) int {
+	if a >= 0 {
+		return a
+	}
+	return -a
+}
+
 func smooth(pts []int) (ret []int) {
 	ret = make([]int, len(pts))
 	copy(ret, pts[:4])
