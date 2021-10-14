@@ -37,9 +37,9 @@ func ROIcmykV2(img image.Image, cx, cy, sRadius int) *image.CMYK {
 
 func ROIgray(img image.Image, left, top, right, bottom int) *image.Gray {
 	rect := image.Rect(left, top, right, bottom)
-	grey := image.NewGray(rect)
-	draw.Draw(grey, rect, img, image.Point{left, top}, draw.Src)
-	return grey
+	gray := image.NewGray(rect)
+	draw.Draw(gray, rect, img, image.Point{left, top}, draw.Src)
+	return gray
 }
 
 func ROIgrayV2(img image.Image, cx, cy, sRadius int) *image.Gray {
@@ -48,4 +48,11 @@ func ROIgrayV2(img image.Image, cx, cy, sRadius int) *image.Gray {
 	right := cx + sRadius
 	bottom := cy + sRadius
 	return ROIgray(img, left, top, right, bottom)
+}
+
+func Cvt2Gray(img draw.Image) *image.Gray {
+	rect := img.Bounds()
+	gray := image.NewGray(rect)
+	draw.Draw(gray, rect, img, rect.Min, draw.Src)
+	return gray
 }

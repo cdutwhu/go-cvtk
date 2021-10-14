@@ -10,12 +10,13 @@ import (
 	"time"
 
 	"github.com/digisan/gotk"
+	"github.com/digisan/gotk/slice/tu8i"
 )
 
 func TestFindPosByColor(t *testing.T) {
 	defer gotk.TrackTime(time.Now())
 
-	f, err := os.Open("./in/calibrate.JPG")
+	f, err := os.Open("./in/mel.png")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -27,10 +28,49 @@ func TestFindPosByColor(t *testing.T) {
 	}
 	fmt.Println(fmtName)
 
-	pos := FindPosByColor(img, color.RGBA{254, 0, 0, 255})
-	fmt.Println(len(pos), pos)
-	for _, p := range pos {
-		roi := ROIrgbaV2(img, p.X, p.Y, 10)
-		savePNG(roi, "./out/roi.png")
+	mChPeak := make(map[string][][]byte) // e.g. "R" [[87, 120], [87, 114] ... ]
+
+	mPeak0Vals := make(map[string][]byte)
+	mPeak1Vals := make(map[string][]byte)
+
+	for idx, roi := range FindROIrgbaByClr(img, color.RGBA{254, 0, 0, 255}, 20, "./out/") {
+
+		r, g, b, _ := SplitRGBA(roi)
+		gray := Cvt2Gray(roi)
+
+		desChClr := []string{"Gray", "R", "G", "B"}
+		for iCh, ch := range []*image.Gray{gray, r, g, b} {
+
+			m, _, _ := histogram(ch.Pix)
+
+			peaks := Peaks(m, 3, 1, 2)
+			// fmt.Println("peak:", peaks)
+			ks, _ := tu8i.Map2KVs(peaks, func(i, j byte) bool { return i < j }, nil)
+
+			clr := desChClr[iCh]
+			mChPeak[clr] = append(mChPeak[clr], ks)
+
+			fmt.Println(idx, clr, ks)
+
+			mPeak0Vals[clr] = append(mPeak0Vals[clr], ks[0])
+			mPeak1Vals[clr] = append(mPeak1Vals[clr], ks[1])
+
+			// bottoms := Bottoms(m, 3, 1, 1)
+			// fmt.Println("bottom:", bottoms)
+
+			hImg := DrawHisto(m, peaks, nil)
+			savePNG(hImg, fmt.Sprintf("./out/histo-%d-%s.png", idx, clr))
+		}
+		fmt.Println()
 	}
+
+	fmt.Println("------------------------------------")
+	for k, v := range mPeak0Vals {
+		fmt.Println(k, v)
+	}
+	fmt.Println("------------------------------------")
+	for k, v := range mPeak1Vals {
+		fmt.Println(k, v)
+	}
+
 }

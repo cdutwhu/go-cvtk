@@ -27,7 +27,7 @@ func TestSplitRGBA(t *testing.T) {
 	}
 	fmt.Println(fmtName)
 
-	SplitRGBA(img)
+	// SplitRGBA(img)
 
 	r, g, b, a := SplitRGBA(img)
 	// savePNG(r, "./out/r.png")
