@@ -25,11 +25,12 @@ func FindPosByClr(img image.Image, c color.RGBA) (pos []image.Point) {
 	return
 }
 
-func FindROIrgbaByClr(img image.Image, c color.RGBA, sRadius int, auditPath string) (rgba []*image.RGBA) {
+func FindROIrgbaByClr(img image.Image, c color.RGBA, sRadius int, auditPath string) (mPtRGBA map[image.Point]*image.RGBA) {
 	gotkio.MustCreateDir(auditPath)
+	mPtRGBA = make(map[image.Point]*image.RGBA)
 	for i, pos := range FindPosByClr(img, c) {
 		roi := ROIrgbaV2(img, pos.X, pos.Y, sRadius)
-		rgba = append(rgba, roi)
+		mPtRGBA[pos] = roi
 		if len(auditPath) > 0 {
 			savePNG(roi, fmt.Sprintf("./%s/%00d-%d-%d.png", auditPath, i, pos.X, pos.Y))
 		}

@@ -33,7 +33,9 @@ func TestFindPosByColor(t *testing.T) {
 	mPeak0Vals := make(map[string][]byte)
 	mPeak1Vals := make(map[string][]byte)
 
-	for idx, roi := range FindROIrgbaByClr(img, color.RGBA{254, 0, 0, 255}, 20, "./out/") {
+	mPtRGBA := FindROIrgbaByClr(img, color.RGBA{254, 0, 0, 255}, 20, "./out/")
+
+	for pt, roi := range mPtRGBA {
 
 		r, g, b, _ := SplitRGBA(roi)
 		gray := Cvt2Gray(roi)
@@ -50,7 +52,7 @@ func TestFindPosByColor(t *testing.T) {
 			clr := desChClr[iCh]
 			mChPeak[clr] = append(mChPeak[clr], ks)
 
-			fmt.Println(idx, clr, ks)
+			fmt.Println(pt, clr, ks)
 
 			mPeak0Vals[clr] = append(mPeak0Vals[clr], ks[0])
 			mPeak1Vals[clr] = append(mPeak1Vals[clr], ks[1])
@@ -59,7 +61,7 @@ func TestFindPosByColor(t *testing.T) {
 			// fmt.Println("bottom:", bottoms)
 
 			hImg := DrawHisto(m, peaks, nil)
-			savePNG(hImg, fmt.Sprintf("./out/histo-%d-%s.png", idx, clr))
+			savePNG(hImg, fmt.Sprintf("./out/histo-%v-%s.png", pt, clr))
 		}
 		fmt.Println()
 	}
