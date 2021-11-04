@@ -1,4 +1,4 @@
-github.com/digisan/go-handy-cv v0.0.7 h1:fndsRKmuh50Hk4UeSFSufgc/ZtIHEqVhzVgSh4Ztwjo=
-github.com/digisan/go-handy-cv v0.0.7/go.mod h1:iplsqfMQmyIEXhqg3o2gfIW7+k6OquI/mSzasIXf7s0=
-github.com/digisan/gotk v0.0.38 h1:MHWrdiMstj0/MyBd4UHjFIp5Fas+/HhmdKuMO220pGc=
-github.com/digisan/gotk v0.0.38/go.mod h1:UQ8YCI0uvFowgH6q7cI6FGDy2vMLmCIgLb/E3HqkUU0=
+github.com/digisan/go-handy-cv v0.0.8 h1:4IL9QvafZyv6l9ND/Ja+3K0BwpolXcNpTzmZhKrhAkk=
+github.com/digisan/go-handy-cv v0.0.8/go.mod h1:iplsqfMQmyIEXhqg3o2gfIW7+k6OquI/mSzasIXf7s0=
+github.com/digisan/gotk v0.0.40 h1:UB9XcQ5HOFQDy7G+LIyzN8uUPOUO80/jhLt3jZIyUzw=
+github.com/digisan/gotk v0.0.40/go.mod h1:UQ8YCI0uvFowgH6q7cI6FGDy2vMLmCIgLb/E3HqkUU0=
