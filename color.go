@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-func ColorEqual(c1, c2 color.RGBA, er, eg, eb, ea int) bool {
-	if abs(int(c1.R)-int(c2.R)) <= er &&
-		abs(int(c1.G)-int(c2.G)) <= eg &&
-		abs(int(c1.B)-int(c2.B)) <= eb &&
-		abs(int(c1.A)-int(c2.A)) <= ea {
+func ColorEqual(c1, c2 color.RGBA, eR, eG, eB, eA int) bool {
+	if abs(int(c1.R)-int(c2.R)) <= eR &&
+		abs(int(c1.G)-int(c2.G)) <= eG &&
+		abs(int(c1.B)-int(c2.B)) <= eB &&
+		abs(int(c1.A)-int(c2.A)) <= eA {
 		return true
 	}
 	return false

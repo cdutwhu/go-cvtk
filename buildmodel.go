@@ -24,8 +24,8 @@ func BuildModel(imagepath string, aim color.RGBA) {
 	}
 	fmt.Println(fmtName)
 
-	mPtRGBA := FindROIrgbaByClr(img, aim, 20, "./out/")
-	fmt.Println(mPtRGBA)
+	mPtROI := FindROIrgbaByClr(img, aim, 70, 7, "./out/")
+	fmt.Println(mPtROI)
 
 	mChPeak := make(map[string][][]byte) // e.g. "R" [[87, 120], [87, 114] ... ] for list of 2 peaks
 	mPeak0Vals := make(map[string][]byte)
@@ -33,7 +33,7 @@ func BuildModel(imagepath string, aim color.RGBA) {
 
 	desChClr := []string{"Gray", "R", "G", "B"}
 
-	for pt, roi := range mPtRGBA {
+	for pt, roi := range mPtROI {
 
 		r, g, b, _ := SplitRGBA(roi)
 		gray := Cvt2Gray(roi)
@@ -53,22 +53,31 @@ func BuildModel(imagepath string, aim color.RGBA) {
 			clr := desChClr[iCh]
 			mChPeak[clr] = append(mChPeak[clr], ks)
 
-			fmt.Println(pt, clr, ks)
-
-			mPeak0Vals[clr] = append(mPeak0Vals[clr], ks[0])
-			mPeak1Vals[clr] = append(mPeak1Vals[clr], ks[1])
+			fmt.Println(pt, clr, "----- two peaks pos:", ks)
 
 			hImg := DrawHisto(m, peaks, nil)
 			savePNG(hImg, fmt.Sprintf("./out/histo-%v-%s.png", pt, clr))
+
+			if len(ks) > 0 {
+				mPeak0Vals[clr] = append(mPeak0Vals[clr], ks[0])
+				if len(ks) > 1 {
+					mPeak1Vals[clr] = append(mPeak1Vals[clr], ks[1])
+				}
+			}
 		}
 
 		fmt.Println()
 	}
 
+	fmt.Println("Peak 1 pos for each ROI:")
 	fmt.Println("------------------------------------")
 	for k, v := range mPeak0Vals {
 		fmt.Println(k, v)
 	}
+
+	fmt.Println("")
+
+	fmt.Println("Peak 2 pos for each ROI:")
 	fmt.Println("------------------------------------")
 	for k, v := range mPeak1Vals {
 		fmt.Println(k, v)

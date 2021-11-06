@@ -54,7 +54,7 @@ func DrawBlob(left, top, right, bottom int, bytes []byte) *image.Gray {
 		paint.Pix[i] = 0
 	}
 
-	blobs := blob.DetectBlob(right-left, bottom-top, right-left, bytes, func(p byte) bool {
+	blobs := blob.DetectBlob(right-left, bottom-top, right-left, bytes, func(x, y int, p byte) bool {
 		return p < 40
 	})
 

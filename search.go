@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 
+	gocv "github.com/digisan/go-handy-cv/blob"
 	gotkio "github.com/digisan/gotk/io"
 )
 
@@ -25,15 +26,71 @@ func FindPosByClr(img image.Image, c color.RGBA) (pos []image.Point) {
 	return
 }
 
-func FindROIrgbaByClr(img image.Image, c color.RGBA, sRadius int, auditPath string) (mPtRGBA map[image.Point]*image.RGBA) {
-	gotkio.MustCreateDir(auditPath)
-	mPtRGBA = make(map[image.Point]*image.RGBA)
-	for i, pos := range FindPosByClr(img, c) {
+func FindROIrgbaByClr(img image.Image, c color.RGBA, sRadius, iRadius int, auditPath string) (mPtROI map[image.Point]*image.RGBA) {
+
+	mPtRGBA := make(map[image.Point]*image.RGBA)
+	for _, pos := range FindPosByClr(img, c) {
 		roi := ROIrgbaV2(img, pos.X, pos.Y, sRadius)
 		mPtRGBA[pos] = roi
+	}
+
+	mPtROI = make(map[image.Point]*image.RGBA)
+NEXT:
+	for pt1, rgba := range mPtRGBA {
+		for pt2 := range mPtROI {
+			if gocv.PtDis(PtImg2Blob(pt1), PtImg2Blob(pt2)) < iRadius {
+				continue NEXT
+			}
+		}
+		mPtROI[pt1] = rgba
+	}
+
+	I := 0
+	for pt, roi := range mPtROI {
 		if len(auditPath) > 0 {
-			savePNG(roi, fmt.Sprintf("./%s/%00d-%d-%d.png", auditPath, i, pos.X, pos.Y))
+			gotkio.MustCreateDir(auditPath)
+			savePNG(roi, fmt.Sprintf("./%s/%00d-%d-%d.png", "./out/", I, pt.X, pt.Y))
+			I++
 		}
 	}
+
 	return
 }
+
+func PtBlob2Img(pt gocv.Point) image.Point {
+	return image.Point{X: pt.X, Y: pt.Y}
+}
+
+func PtImg2Blob(pt image.Point) gocv.Point {
+	return gocv.Point{X: pt.X, Y: pt.Y}
+}
+
+// func FindROIrgbaByBlob(img image.Image,
+// 	sRadius int,
+// 	filterR func(x, y int, p byte) bool,
+// 	filterG func(x, y int, p byte) bool,
+// 	filterB func(x, y int, p byte) bool,
+// 	disErr int,
+// 	auditPath string) (mPtRGBA map[image.Point]*image.RGBA) {
+
+// 	gotkio.MustCreateDir(auditPath)
+// 	mPtRGBA = make(map[image.Point]*image.RGBA)
+
+// 	// rect := img.Bounds()
+// 	// rgba := ROIrgba(img, rect.Min.X, rect.Min.Y, rect.Max.X, rect.Max.Y)
+
+// 	r, g, b, _ := SplitRGBA(img)
+// 	blobPosGrp := gocv.DetectClrBlobPos(r.Rect.Dx(), r.Rect.Dy(), r.Stride,
+// 		r.Pix, g.Pix, b.Pix,
+// 		filterR, filterG, filterB, disErr)
+
+// 	for i, bpos := range blobPosGrp {
+// 		pos := image.Point{X: bpos.X, Y: bpos.Y}
+// 		roi := ROIrgbaV2(img, pos.X, pos.Y, sRadius)
+// 		mPtRGBA[pos] = roi
+// 		if len(auditPath) > 0 {
+// 			savePNG(roi, fmt.Sprintf("./%s/%00d-%d-%d.png", auditPath, i, pos.X, pos.Y))
+// 		}
+// 	}
+// 	return
+// }

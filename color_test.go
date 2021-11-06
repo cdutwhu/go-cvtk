@@ -30,10 +30,10 @@ func TestSplitRGBA(t *testing.T) {
 	// SplitRGBA(img)
 
 	r, g, b, a := SplitRGBA(img)
-	// savePNG(r, "./out/r.png")
-	// savePNG(g, "./out/g.png")
-	// savePNG(b, "./out/b.png")
-	// savePNG(a, "./out/a.png")
+	savePNG(r, "./out/r.png")
+	savePNG(g, "./out/g.png")
+	savePNG(b, "./out/b.png")
+	savePNG(a, "./out/a.png")
 
 	///
 
