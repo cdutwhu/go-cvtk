@@ -3,10 +3,14 @@ package main
 import (
 	"image"
 	"image/draw"
+	"math"
+	"sort"
 
+	"github.com/cnkei/gospline"
 	"github.com/digisan/go-handy-cv/blob"
 	"github.com/digisan/gotk/slice/ti"
 	"github.com/digisan/gotk/slice/tu8i"
+	"github.com/fogleman/gg"
 )
 
 func DrawRect(img *image.Gray, left, top, right, bottom int, paint *image.Gray) *image.Gray {
@@ -63,7 +67,7 @@ func DrawBlob(left, top, right, bottom int, bytes []byte) *image.Gray {
 
 	for _, blob := range blobs {
 		loc := blob.Loc()
-		left, top, right, bottom := loc[0].X, loc[0].Y, loc[1].X, loc[1].Y
+		left, top, right, bottom := loc.Min.X, loc.Min.Y, loc.Max.X, loc.Max.Y
 		hImg = DrawRect(hImg, left, top, right, bottom, paint)
 	}
 	return hImg
@@ -119,3 +123,80 @@ func DrawHisto(mHisto, mPeak, mBottom map[byte]int) (hImg *image.Gray) {
 
 	return hImg
 }
+
+///////////////////////////////////////////////////////////////////////////
+
+func ZipPoints(xs, ys []float64) (pts []image.Point) {
+	for i, x := range xs {
+		y := ys[i]
+		pts = append(pts, image.Point{X: int(x), Y: int(y)})
+	}
+	return
+}
+
+func UnzipPoints(pts []image.Point) (xs, ys []float64) {
+	for _, pt := range pts {
+		xs = append(xs, float64(pt.X))
+		ys = append(ys, float64(pt.Y))
+	}
+	return
+}
+
+func MinMaxPtX(pts []image.Point) (minX, maxX float64) {
+	minX, maxX = math.MaxInt32, math.MinInt32
+	xs, _ := UnzipPoints(pts)
+	for _, x := range xs {
+		if x < minX {
+			minX = x
+		}
+		if x > maxX {
+			maxX = x
+		}
+	}
+	return
+}
+
+func SortPointByX(pts []image.Point) {
+	sort.SliceStable(pts, func(i, j int) bool {
+		return (pts)[i].X < (pts)[j].X
+	})
+}
+
+func SortPointByY(pts []image.Point) {
+	sort.SliceStable(pts, func(i, j int) bool {
+		return (pts)[i].Y < (pts)[j].Y
+	})
+}
+
+func DrawSpline(img image.Image, pts []image.Point, step int, savePath string) image.Image {
+
+	dc := gg.NewContextForImage(img)
+	dc.SetRGB(1, 0, 0)
+	dc.SetLineWidth(2)
+
+	SortPointByX(pts)
+	minX, maxX := MinMaxPtX(pts)
+	maxX2 := maxX - float64(step)
+	s := gospline.NewCubicSpline(UnzipPoints(pts))
+	for x := minX; x <= maxX2; x += float64(step) {
+		y := s.At(x)
+		xNext := x + float64(step)
+		yNext := s.At(xNext)
+		dc.DrawLine(x, y, xNext, yNext)
+	}
+	dc.Stroke()
+
+	if savePath != "" {
+		dc.SavePNG(savePath)
+	}
+
+	return dc.Image()
+}
+
+// func DrawCircle(img image.Image, centre image.Point, r float64) {
+// 	dc := gg.NewContextForImage(img)
+// 	dc.DrawCircle(50, 50, 40)
+// 	dc.SetRGB(1, 0, 0)
+// 	dc.Fill()
+// 	dc.SavePNG("./out/out.png")
+// }

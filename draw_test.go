@@ -49,3 +49,26 @@ func TestDraw(t *testing.T) {
 	hImg := DrawHisto(m, Peaks(m, 3, 1, -1), Bottoms(m, 3, 1, -1))
 	savePNG(hImg, "./out/histo.png")
 }
+
+func TestDrawSpline(t *testing.T) {
+
+	f, err := os.Open("./in/mel.png")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer f.Close()
+
+	img, fmtName, err := image.Decode(f)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(fmtName)
+
+	img = DrawSpline(img,
+		[]image.Point{{200, 600}, {100, 300}, {300, 400}, {400, 700}},
+		5,
+		"",
+	)
+
+	savePNG(img, "./out/spline-image.png")
+}

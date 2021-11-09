@@ -18,7 +18,7 @@ func FindPosByClr(img image.Image, c color.RGBA) (pos []image.Point) {
 		for x := 0; x < rect.Dx(); x++ {
 			p := pln[4*x:]
 			cmp := color.RGBA{p[0], p[1], p[2], p[3]}
-			if ColorEqual(c, cmp, 3, 0, 0, 256) {
+			if ColorEqual(c, cmp, 3, 3, 3, 256) {
 				pos = append(pos, image.Point{x, y})
 			}
 		}
@@ -38,7 +38,7 @@ func FindROIrgbaByClr(img image.Image, c color.RGBA, sRadius, iRadius int, audit
 NEXT:
 	for pt1, rgba := range mPtRGBA {
 		for pt2 := range mPtROI {
-			if gocv.PtDis(PtImg2Blob(pt1), PtImg2Blob(pt2)) < iRadius {
+			if gocv.PtDis(pt1, pt2) < iRadius {
 				continue NEXT
 			}
 		}
@@ -55,14 +55,6 @@ NEXT:
 	}
 
 	return
-}
-
-func PtBlob2Img(pt gocv.Point) image.Point {
-	return image.Point{X: pt.X, Y: pt.Y}
-}
-
-func PtImg2Blob(pt image.Point) gocv.Point {
-	return gocv.Point{X: pt.X, Y: pt.Y}
 }
 
 // func FindROIrgbaByBlob(img image.Image,
