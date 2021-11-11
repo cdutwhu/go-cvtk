@@ -24,13 +24,17 @@ func TestDrawEdge(t *testing.T) {
 	cfgEdge := "./cfg/AB-edge.json"
 	modelImage := "./in/sample/std.jpg"
 	BuildModel(cfgEdge, "AB", modelImage, color.RGBA{255, 0, 0, 255})
-	
+
 	// edge := LoadLastRecord(cfgEdge)
 
 	// outImage := "./out/lines.jpg"
 	// img := loadImg(modelImage)
 	// DrawSpline(img, edge.Points(), 5, outImage)
 }
+
+// func SearchNextROI(img image.Image, edge *EdgeRecord) {
+
+// }
 
 func TestMarkNextImage(t *testing.T) {
 

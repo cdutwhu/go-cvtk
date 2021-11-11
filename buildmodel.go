@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"log"
-	"os"
 
 	"github.com/digisan/gotk/slice/tu8i"
 )
@@ -25,17 +23,7 @@ func BuildModel(recordPath, recordName, imagePath string, aim color.RGBA) {
 
 	record := NewEdgeRecord(recordName, imagePath)
 
-	f, err := os.Open(imagePath)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer f.Close()
-
-	img, fmtName, err := image.Decode(f)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(fmtName)
+	img := loadImg(imagePath)
 
 	mPtROI := FindROIrgbaByClr(img, aim, 70, 7, "./out/")
 	fmt.Println(mPtROI)
