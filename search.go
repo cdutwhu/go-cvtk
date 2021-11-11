@@ -49,7 +49,7 @@ NEXT:
 	for pt, roi := range mPtROI {
 		if len(auditPath) > 0 {
 			gotkio.MustCreateDir(auditPath)
-			savePNG(roi, fmt.Sprintf("./%s/%00d-%d-%d.png", "./out/", I, pt.X, pt.Y))
+			savePNG(roi, fmt.Sprintf("./%s/%00d-%d-%d.png", "./out/audit/", I, pt.X, pt.Y))
 			I++
 		}
 	}

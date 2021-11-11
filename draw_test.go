@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"image"
-	"log"
-	"os"
 	"testing"
 	"time"
 
@@ -14,17 +12,7 @@ import (
 func TestDraw(t *testing.T) {
 	defer gotk.TrackTime(time.Now())
 
-	f, err := os.Open("./in/mel.png")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer f.Close()
-
-	img, fmtName, err := image.Decode(f)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(fmtName)
+	img := loadImg("./in/mel.png")
 
 	imagerect := img.Bounds()
 	fmt.Println(img.Bounds())
@@ -51,24 +39,11 @@ func TestDraw(t *testing.T) {
 }
 
 func TestDrawSpline(t *testing.T) {
-
-	f, err := os.Open("./in/mel.png")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer f.Close()
-
-	img, fmtName, err := image.Decode(f)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(fmtName)
-
+	img := loadImg("./in/mel.png")
 	img = DrawSpline(img,
 		[]image.Point{{200, 600}, {100, 300}, {300, 400}, {400, 700}},
 		5,
 		"",
 	)
-
 	savePNG(img, "./out/spline-image.png")
 }

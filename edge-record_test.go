@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
-func TestPtsRecord(t *testing.T) {
+func TestEdgeRecord(t *testing.T) {
 	record := NewEdgeRecord("AB", "./in/start/1.jpg")
 	record.AddPtInfo(
 		100,
@@ -26,8 +25,8 @@ func TestPtsRecord(t *testing.T) {
 	record.Log("./out/AB-edge.json")
 }
 
-func TestLoadPts(t *testing.T) {
-	edge := LoadLastRecord("./out/AB-edge.json")
-	fmt.Println(edge)
-	fmt.Println(edge.Pts[0].GreenPeaks[0])
-}
+// func TestLoadEdgeRecord(t *testing.T) {
+// 	edge := LoadLastRecord("./out/AB-edge.json")
+// 	fmt.Println(edge)
+// 	fmt.Println(edge.Pts[0].GreenPeaks[0])
+// }

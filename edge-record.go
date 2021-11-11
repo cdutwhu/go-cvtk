@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"image"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -65,9 +67,21 @@ func LoadLastRecord(jaFile string) *EdgeRecord {
 	end := strings.LastIndex(js, "}")
 	block := "{" + js[start:end] + "}"
 
-	pts := &EdgeRecord{}
-	json.Unmarshal([]byte(block), pts)
-	return pts
+	record := &EdgeRecord{}
+	json.Unmarshal([]byte(block), record)
+
+	sort.Slice(record.Pts, func(i, j int) bool {
+		return record.Pts[i].Y < record.Pts[j].Y
+	})
+
+	return record
+}
+
+func (r *EdgeRecord) Points() (points []image.Point) {
+	for _, pt := range r.Pts {
+		points = append(points, image.Point{X: pt.X, Y: pt.Y})
+	}
+	return
 }
 
 func (r *EdgeRecord) AddPtInfo(x, y int, grayPeaks, rPeaks, gPeaks, bPeaks []byte) {
