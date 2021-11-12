@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	searchOffset  = 50
+	searchOffset  = 70
 	roiRadius     = 70
 	ignrClrRadius = 7
 )

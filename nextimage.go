@@ -10,7 +10,7 @@ import (
 
 func peaksDiff(GRAY, RED, GREEN, BLUE []byte, gray, red, green, blue []byte) float64 {
 
-	vDefault := 50.0
+	vDefault := 100.0
 
 	sum, count := 0.0, 0
 	for i, G := range GRAY {
@@ -20,7 +20,7 @@ func peaksDiff(GRAY, RED, GREEN, BLUE []byte, gray, red, green, blue []byte) flo
 			count++
 		}
 	}
-	vGray := vDefault
+	vGray := vDefault * wChPk[iGray]
 	if count > 0 {
 		vGray = sum / float64(count)
 	}
@@ -33,7 +33,7 @@ func peaksDiff(GRAY, RED, GREEN, BLUE []byte, gray, red, green, blue []byte) flo
 			count++
 		}
 	}
-	vRed := vDefault
+	vRed := vDefault * wChPk[iRed]
 	if count > 0 {
 		vRed = sum / float64(count)
 	}
@@ -46,7 +46,7 @@ func peaksDiff(GRAY, RED, GREEN, BLUE []byte, gray, red, green, blue []byte) flo
 			count++
 		}
 	}
-	vGreen := vDefault
+	vGreen := vDefault * wChPk[iGreen]
 	if count > 0 {
 		vGreen = sum / float64(count)
 	}
@@ -59,7 +59,7 @@ func peaksDiff(GRAY, RED, GREEN, BLUE []byte, gray, red, green, blue []byte) flo
 			count++
 		}
 	}
-	vBlue := vDefault
+	vBlue := vDefault * wChPk[iBlue]
 	if count > 0 {
 		vBlue = sum / float64(count)
 	}
