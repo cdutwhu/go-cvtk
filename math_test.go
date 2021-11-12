@@ -78,6 +78,7 @@ func Test_maxSlope(t *testing.T) {
 	tests := []struct {
 		name      string
 		args      args
+		wantXMax  int
 		wantXUp   int
 		wantXDown int
 	}{
@@ -95,12 +96,12 @@ func Test_maxSlope(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotXUp, gotXDown := maxSlope(tt.args.data, tt.args.step, tt.args.nSmooth)
+			gotXMax, gotXUp, gotXDown := maxSlope(tt.args.data, tt.args.step, tt.args.nSmooth)
 			if gotXUp != tt.wantXUp {
-				t.Errorf("maxSlope() gotXUp = %v, want %v", gotXUp, tt.wantXUp)
+				t.Errorf("maxSlope() gotXMax = %v, gotXUp = %v, want %v", gotXMax, gotXUp, tt.wantXUp)
 			}
 			if gotXDown != tt.wantXDown {
-				t.Errorf("maxSlope() gotXDown = %v, want %v", gotXDown, tt.wantXDown)
+				t.Errorf("maxSlope() gotXMax = %v, gotXDown = %v, want %v", gotXMax, gotXDown, tt.wantXDown)
 			}
 		})
 	}

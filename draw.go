@@ -168,6 +168,18 @@ func SortPointByY(pts []image.Point) {
 	})
 }
 
+// func DrawLines(img image.Image, pts []image.Point, step int, savePath string) image.Image {
+
+// 	dc := gg.NewContextForImage(img)
+// 	dc.SetRGB(1, 0, 0)
+// 	dc.SetLineWidth(2)
+
+// 	SortPointByY(pts)
+// 	for i := 1; i < len(pts); i++ {
+
+// 	}
+// }
+
 func DrawSpline(img image.Image, pts []image.Point, step int, savePath string) image.Image {
 
 	dc := gg.NewContextForImage(img)
@@ -193,10 +205,17 @@ func DrawSpline(img image.Image, pts []image.Point, step int, savePath string) i
 	return dc.Image()
 }
 
-// func DrawCircle(img image.Image, centre image.Point, r float64) {
-// 	dc := gg.NewContextForImage(img)
-// 	dc.DrawCircle(50, 50, 40)
-// 	dc.SetRGB(1, 0, 0)
-// 	dc.Fill()
-// 	dc.SavePNG("./out/out.png")
-// }
+func DrawCircle(img image.Image, centres []image.Point, r float64, savePath string) image.Image {
+	dc := gg.NewContextForImage(img)
+	for _, c := range centres {
+		dc.DrawCircle(float64(c.X), float64(c.Y), r)
+	}
+	dc.SetRGB(1, 0, 0)
+	dc.Fill()
+
+	if savePath != "" {
+		dc.SavePNG(savePath)
+	}
+
+	return dc.Image()
+}
