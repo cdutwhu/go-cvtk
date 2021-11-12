@@ -68,3 +68,40 @@ func Test_minabs(t *testing.T) {
 		})
 	}
 }
+
+func Test_maxSlope(t *testing.T) {
+	type args struct {
+		data    []int
+		step    int
+		nSmooth int
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantXUp   int
+		wantXDown int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				data:    []int{1, 2, 4, 5, 6, 9, 10, 3, 8, 8},
+				step:    3,
+				nSmooth: 1,
+			},
+			wantXUp:   8,
+			wantXDown: 6,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotXUp, gotXDown := maxSlope(tt.args.data, tt.args.step, tt.args.nSmooth)
+			if gotXUp != tt.wantXUp {
+				t.Errorf("maxSlope() gotXUp = %v, want %v", gotXUp, tt.wantXUp)
+			}
+			if gotXDown != tt.wantXDown {
+				t.Errorf("maxSlope() gotXDown = %v, want %v", gotXDown, tt.wantXDown)
+			}
+		})
+	}
+}

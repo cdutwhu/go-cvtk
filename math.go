@@ -1,6 +1,8 @@
 package main
 
 import (
+	"sort"
+
 	"github.com/digisan/gotk/slice/tf64"
 	"github.com/digisan/gotk/slice/ti"
 	"github.com/digisan/gotk/slice/tu8i"
@@ -258,4 +260,44 @@ func Bottoms(data map[byte]int, halfstep, nSmooth, n int) map[byte]int {
 		mp[ks[i]] = vs[i]
 	}
 	return mp
+}
+
+func maxSlope(data []int, step, nSmooth int) (xUp, xDown int) {
+
+	xUp, xDown = -1, -1
+
+	for i := 0; i < nSmooth; i++ {
+		data = smooth(data)
+	}
+
+	slope := []struct {
+		ix int
+		dy int
+	}{}
+
+	for i := step - 1; i < len(data); i++ {
+		a := data[i-(step-1)]
+		b := data[i]
+		slope = append(slope, struct {
+			ix int
+			dy int
+		}{
+			ix: i - step/2,
+			dy: b - a,
+		})
+	}
+
+	sort.SliceStable(slope, func(i, j int) bool {
+		return slope[i].dy > slope[j].dy
+	})
+
+	if slope[0].dy > 0 {
+		xUp = slope[0].ix
+	}
+
+	if slope[len(slope)-1].dy < 0 {
+		xDown = slope[len(slope)-1].ix
+	}
+
+	return
 }
