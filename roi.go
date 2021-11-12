@@ -50,7 +50,7 @@ func ROIgrayV2(img image.Image, cx, cy, sRadius int) *image.Gray {
 	return ROIgray(img, left, top, right, bottom)
 }
 
-func Cvt2Gray(img draw.Image) *image.Gray {
+func Cvt2Gray(img image.Image) *image.Gray {
 	rect := img.Bounds()
 	gray := image.NewGray(rect)
 	draw.Draw(gray, rect, img, rect.Min, draw.Src)

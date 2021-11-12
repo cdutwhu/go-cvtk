@@ -9,6 +9,12 @@ import (
 )
 
 const (
+	searchOffset  = 50
+	roiRadius     = 70
+	ignrClrRadius = 7
+)
+
+const (
 	iGray = iota
 	iRed
 	iGreen
@@ -17,6 +23,7 @@ const (
 
 var (
 	chClr = []string{"Gray", "Red", "Green", "Blue"}
+	wChPk = []float64{0.4, 0.3, 0.2, 0.1}
 )
 
 func BuildModel(recordPath, recordName, imagePath string, aim color.RGBA) {
@@ -25,7 +32,7 @@ func BuildModel(recordPath, recordName, imagePath string, aim color.RGBA) {
 
 	img := loadImg(imagePath)
 
-	mPtROI := FindROIrgbaByClr(img, aim, 70, 7, "./out/")
+	mPtROI := FindROIrgbaByClr(img, aim, roiRadius, ignrClrRadius, "./out/")
 	fmt.Println(mPtROI)
 
 	for pt, roi := range mPtROI {

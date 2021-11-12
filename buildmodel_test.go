@@ -32,11 +32,7 @@ func TestDrawEdge(t *testing.T) {
 	// DrawSpline(img, edge.Points(), 5, outImage)
 }
 
-// func SearchNextROI(img image.Image, edge *EdgeRecord) {
-
-// }
-
-func TestMarkNextImage(t *testing.T) {
+func TestMarkImage(t *testing.T) {
 
 	cfgEdge := "./cfg/AB-edge.json"
 	edge := LoadLastRecord(cfgEdge)
