@@ -56,3 +56,21 @@ func Cvt2Gray(img image.Image) *image.Gray {
 	draw.Draw(gray, rect, img, rect.Min, draw.Src)
 	return gray
 }
+
+func GrayStripeV(img *image.Gray, x int) (stripe []int) {
+	for y := 0; y < img.Rect.Dy(); y++ {
+		offset := y * img.Stride
+		pixel := img.Pix[offset+x]
+		stripe = append(stripe, int(pixel))
+	}
+	return
+}
+
+func GrayStripeH(img *image.Gray, y int) (stripe []int) {
+	offset := img.Stride * y
+	line := img.Pix[offset : offset+img.Stride]
+	for _, p := range line {
+		stripe = append(stripe, int(p))
+	}
+	return
+}

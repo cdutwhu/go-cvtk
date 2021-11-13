@@ -5,7 +5,7 @@ import (
 )
 
 func TestEdgeRecord(t *testing.T) {
-	record := NewEdgeRecord("AB", "./in/start/1.jpg")
+	record := NewEdgeRecord("AB", "./in/sample/1.jpg")
 	record.AddPtInfo(
 		100,
 		100,
