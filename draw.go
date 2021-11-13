@@ -180,11 +180,22 @@ func SortPointByY(pts []image.Point) {
 // 	}
 // }
 
-func DrawSpline(img image.Image, pts []image.Point, step int, savePath string) image.Image {
+func DrawSpline(img image.Image, pts []image.Point, step int, color string, savePath string) image.Image {
 
 	dc := gg.NewContextForImage(img)
-	dc.SetRGB(1, 0, 0)
-	dc.SetLineWidth(2)
+
+	switch color {
+	case "RED", "R", "Red", "red":
+		dc.SetRGB(1, 0, 0)
+	case "GREEN", "G", "Green", "green":
+		dc.SetRGB(0, 1, 0)
+	case "BLUE", "B", "Blue", "blue":
+		dc.SetRGB(0, 0, 1)
+	default:
+		dc.SetRGB(0, 0, 0)
+	}
+
+	dc.SetLineWidth(4)
 
 	SortPointByX(pts)
 	minX, maxX := MinMaxPtX(pts)
@@ -205,12 +216,21 @@ func DrawSpline(img image.Image, pts []image.Point, step int, savePath string) i
 	return dc.Image()
 }
 
-func DrawCircle(img image.Image, centres []image.Point, r float64, savePath string) image.Image {
+func DrawCircle(img image.Image, centres []image.Point, r int, color string, savePath string) image.Image {
 	dc := gg.NewContextForImage(img)
 	for _, c := range centres {
-		dc.DrawCircle(float64(c.X), float64(c.Y), r)
+		dc.DrawCircle(float64(c.X), float64(c.Y), float64(r))
 	}
-	dc.SetRGB(1, 0, 0)
+	switch color {
+	case "RED", "R", "Red", "red":
+		dc.SetRGB(1, 0, 0)
+	case "GREEN", "G", "Green", "green":
+		dc.SetRGB(0, 1, 0)
+	case "BLUE", "B", "Blue", "blue":
+		dc.SetRGB(0, 0, 1)
+	default:
+		dc.SetRGB(0, 0, 0)
+	}
 	dc.Fill()
 
 	if savePath != "" {

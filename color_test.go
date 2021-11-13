@@ -1,6 +1,8 @@
 package main
 
 import (
+	// _ "image/jpg"
+	"fmt"
 	_ "image/png"
 	"testing"
 	"time"
@@ -11,18 +13,17 @@ import (
 func TestSplitRGBA(t *testing.T) {
 	defer gotk.TrackTime(time.Now())
 
-	img := loadImg("./in/mel.png")
-
-	// SplitRGBA(img)
+	img := loadImg("./in/sample/1.jpg")
+	fmt.Println(img.Bounds())
 
 	r, g, b, a := SplitRGBA(img)
-	savePNG(r, "./out/r.png")
-	savePNG(g, "./out/g.png")
-	savePNG(b, "./out/b.png")
-	savePNG(a, "./out/a.png")
+	saveJPG(r, "./out/r.jpg")
+	saveJPG(g, "./out/g.jpg")
+	saveJPG(b, "./out/b.jpg")
+	saveJPG(a, "./out/a.jpg")
 
-	///
+	// ///
 
 	com := CompositeRGBA(r, g, b, a)
-	savePNG(com, "./out/MelCom.png")
+	saveJPG(com, "./out/com1.png")
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -16,11 +15,11 @@ func loadImg(path string) image.Image {
 	}
 	defer f.Close()
 
-	img, fmtName, err := image.Decode(f)
+	img, _, err := image.Decode(f)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(fmtName)
+	// fmt.Println(fmtName)
 
 	return img
 }
@@ -35,7 +34,7 @@ func saveJPG(img image.Image, path string) image.Image {
 	var opts jpeg.Options
 	opts.Quality = 100
 	if err := jpeg.Encode(out, img, &opts); err != nil {
-		log.Println(err)
+		log.Println("Error on Saving as JPG")
 	}
 	return img
 }
@@ -48,7 +47,7 @@ func savePNG(img image.Image, path string) image.Image {
 	defer out.Close()
 
 	if err := png.Encode(out, img); err != nil {
-		log.Println(err)
+		log.Println("Error on Saving as PNG")
 	}
 	return img
 }

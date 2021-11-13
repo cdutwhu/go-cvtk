@@ -44,12 +44,18 @@ func CompositeRGBA(r, g, b, a image.Image) *image.RGBA {
 func SplitRGBA(img image.Image) (r, g, b, a *image.Gray) {
 
 	rect := img.Bounds()
+
+	left, top, right, bottom := rect.Min.X, rect.Min.Y, rect.Max.X, rect.Max.Y
+	img = ROIrgba(img, left, top, right, bottom)
+
 	var bytes []byte
 	switch pImg := img.(type) {
 	case *image.RGBA:
 		bytes = pImg.Pix
 	case *image.NRGBA:
 		bytes = pImg.Pix
+	// case *image.YCbCr: //	YCbCrSubsampleRatio444
+	// 	bytes = pImg.Pix
 	default:
 		log.Fatalf("[%v] is not support", pImg)
 	}

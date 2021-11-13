@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	searchOffset  = 70
-	roiRadius     = 70
-	ignrClrRadius = 7
+	searchOffset  = 50
+	roiRadius     = 50
+	ignrClrRadius = 5
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 
 var (
 	chClr = []string{"Gray", "Red", "Green", "Blue"}
-	wChPk = []float64{0.4, 0.3, 0.2, 0.1}
+	wChPk = []float64{0.2, 0.5, 0.3, 0.0}
 )
 
 func BuildModel(recordPath, recordName, imagePath string, aim color.RGBA) {

@@ -43,6 +43,7 @@ func TestDrawSpline(t *testing.T) {
 	img = DrawSpline(img,
 		[]image.Point{{200, 600}, {100, 300}, {300, 400}, {400, 700}},
 		5,
+		"R",
 		"",
 	)
 	savePNG(img, "./out/spline-image.png")

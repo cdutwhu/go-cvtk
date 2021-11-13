@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -25,8 +26,8 @@ func TestEdgeRecord(t *testing.T) {
 	record.Log("./out/AB-edge.json")
 }
 
-// func TestLoadEdgeRecord(t *testing.T) {
-// 	edge := LoadLastRecord("./out/AB-edge.json")
-// 	fmt.Println(edge)
-// 	fmt.Println(edge.Pts[0].GreenPeaks[0])
-// }
+func TestLoadEdgeRecord1(t *testing.T) {
+	edge := LoadLastRecord("./cfg/AB-edge.json")
+	fmt.Println(edge)
+	fmt.Println(edge.Pts[0].GreenPeaks[0])
+}
