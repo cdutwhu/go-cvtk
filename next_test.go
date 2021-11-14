@@ -23,7 +23,7 @@ func TestSearchNextROI(t *testing.T) {
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 
-	mode := "DOT"
+	mode := "LINE"
 
 	var draw func(img image.Image, centres []image.Point, r int, color string, savePath string) image.Image
 

@@ -14,7 +14,7 @@ func TestBuildModel(t *testing.T) {
 func TestLoadEdgeRecord(t *testing.T) {
 	edge := LoadLastRecord("./out/AB-edge.json")
 	fmt.Println(edge)
-	fmt.Println(edge.Pts[0].GreenPeaks[0])
+	fmt.Println(edge.Pts[0].ValAbove)
 }
 
 func TestDrawEdge(t *testing.T) {

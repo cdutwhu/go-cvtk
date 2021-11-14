@@ -1,79 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"math"
 	"sort"
-
-	"github.com/digisan/gotk/slice/ti"
-	"github.com/digisan/gotk/slice/tu8i"
 )
 
-func peaksDiff(GRAY, RED, GREEN, BLUE []byte, gray, red, green, blue []byte) float64 {
-
-	vDefault := 100.0
-
-	sum, count := 0.0, 0
-	for i, G := range GRAY {
-		if len(gray) > i {
-			g := gray[i]
-			sum += math.Abs(float64(G) - float64(g))
-			count++
-		}
-	}
-	vGray := vDefault * wChPk[iGray]
-	if count > 0 {
-		vGray = sum / float64(count)
-	}
-
-	sum, count = 0.0, 0
-	for i, R := range RED {
-		if len(red) > i {
-			r := red[i]
-			sum += math.Abs(float64(R) - float64(r))
-			count++
-		}
-	}
-	vRed := vDefault * wChPk[iRed]
-	if count > 0 {
-		vRed = sum / float64(count)
-	}
-
-	sum, count = 0.0, 0
-	for i, G := range GREEN {
-		if len(green) > i {
-			g := green[i]
-			sum += math.Abs(float64(G) - float64(g))
-			count++
-		}
-	}
-	vGreen := vDefault * wChPk[iGreen]
-	if count > 0 {
-		vGreen = sum / float64(count)
-	}
-
-	sum, count = 0.0, 0
-	for i, B := range BLUE {
-		if len(blue) > i {
-			b := blue[i]
-			sum += math.Abs(float64(B) - float64(b))
-			count++
-		}
-	}
-	vBlue := vDefault * wChPk[iBlue]
-	if count > 0 {
-		vBlue = sum / float64(count)
-	}
-
-	return vGray*wChPk[iGray] + vRed*wChPk[iRed] + vGreen*wChPk[iGreen] + vBlue*wChPk[iBlue]
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-
 type ROICandidate struct {
-	X, Y int
+	pt   image.Point
 	data *image.RGBA
+	dy   int
 }
 
 func nextROICandidates(imgPath, cfgEdge string) (selected []ROICandidate) {
@@ -81,240 +17,113 @@ func nextROICandidates(imgPath, cfgEdge string) (selected []ROICandidate) {
 	edge := LoadLastRecord(cfgEdge)
 	for _, pt := range edge.Points() {
 		selected = append(selected, ROICandidate{
-			X:    pt.X,
-			Y:    pt.Y,
+			pt:   pt,
 			data: ROIrgbaV2(img, pt.X, pt.Y, roiRadius),
 		})
 	}
+	sort.SliceStable(selected, func(i, j int) bool {
+		return selected[i].pt.X < selected[j].pt.X
+	})
 	return
 }
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-// type ROICandidate struct {
-// 	X, Y int
-// 	diff float64
-// 	data *image.RGBA
-// }
-
-// search Horizontally
-// func searchNextROI(imgPath, cfgEdge string) (selected []ROICandidate) {
-
-// 	img := loadImg(imgPath)
-// 	edge := LoadLastRecord(cfgEdge)
-
-// 	for _, pt := range edge.Pts {
-// 		// out
-// 		candidates := []ROICandidate{}
-
-// 		start := pt.X - searchOffset
-// 		end := pt.X + searchOffset
-// 		for s := start; s < end; s++ {
-
-// 			roi := ROIrgbaV2(img, s, pt.Y, roiRadius)
-// 			r, g, b, _ := SplitRGBA(roi)
-// 			gray := Cvt2Gray(roi)
-
-// 			// out
-// 			chPeaks := [][]byte{}
-
-// 			for _, ch := range []*image.Gray{gray, r, g, b} {
-
-// 				m, _, _ := histogram(ch.Pix)                                             // histogram data
-// 				peaks := Peaks(m, 3, 1, 2)                                               // only find 2 peaks
-// 				ks, _ := tu8i.Map2KVs(peaks, func(i, j byte) bool { return i > j }, nil) // DESC, most background value at the first
-
-// 				chPeaks = append(chPeaks, ks)
-// 			}
-
-// 			candidates = append(candidates, ROICandidate{
-// 				X: s,
-// 				Y: pt.Y,
-// 				diff: peaksDiff(
-// 					pt.GrayPeaks, pt.RedPeaks, pt.GreenPeaks, pt.BluePeaks,
-// 					chPeaks[iGray], chPeaks[iRed], chPeaks[iGreen], chPeaks[iBlue],
-// 				),
-// 				data: roi,
-// 			})
-// 		}
-
-// 		sort.SliceStable(candidates, func(i, j int) bool {
-// 			return candidates[i].diff < candidates[j].diff
-// 		})
-
-// 		selected = append(selected, candidates[0])
-// 	}
-
-// 	return
-// }
-
-// search Vertically
-// func searchNextROI(imgPath, cfgEdge string) (selected []ROICandidate) {
-
-// 	img := loadImg(imgPath)
-// 	edge := LoadLastRecord(cfgEdge)
-
-// 	for _, pt := range edge.Pts {
-// 		// out
-// 		candidates := []ROICandidate{}
-
-// 		start := pt.Y - searchOffset
-// 		end := pt.Y + searchOffset
-// 		for y := start; y < end; y++ {
-
-// 			roi := ROIrgbaV2(img, pt.X, y, roiRadius)
-// 			r, g, b, _ := SplitRGBA(roi)
-// 			gray := Cvt2Gray(roi)
-
-// 			// out
-// 			chPeaks := [][]byte{}
-
-// 			for _, ch := range []*image.Gray{gray, r, g, b} {
-
-// 				m, _, _ := histogram(ch.Pix)                                             // histogram data
-// 				peaks := Peaks(m, 3, 1, 2)                                               // only find 2 peaks
-// 				ks, _ := tu8i.Map2KVs(peaks, func(i, j byte) bool { return i > j }, nil) // DESC, most background value at the first
-
-// 				chPeaks = append(chPeaks, ks)
-// 			}
-
-// 			candidates = append(candidates, ROICandidate{
-// 				X: pt.X,
-// 				Y: y,
-// 				diff: peaksDiff(
-// 					pt.GrayPeaks, pt.RedPeaks, pt.GreenPeaks, pt.BluePeaks,
-// 					chPeaks[iGray], chPeaks[iRed], chPeaks[iGreen], chPeaks[iBlue],
-// 				),
-// 				data: roi,
-// 			})
-// 		}
-
-// 		sort.SliceStable(candidates, func(i, j int) bool {
-// 			return candidates[i].diff < candidates[j].diff
-// 		})
-
-// 		selected = append(selected, candidates[0])
-// 	}
-
-// 	sort.SliceStable(selected, func(i, j int) bool {
-// 		return selected[i].X < selected[j].X
-// 	})
-
-// 	return
-// }
 
 func makeNextEdgeCfg(selected []ROICandidate, cfgEdge, recordName, imgPath string) {
 	record := NewEdgeRecord(recordName, imgPath)
 	for _, roi := range selected {
-		r, g, b, _ := SplitRGBA(roi.data)
-		gray := Cvt2Gray(roi.data)
-		chPeaks := [][]byte{}
-		for _, ch := range []*image.Gray{gray, r, g, b} {
-			m, _, _ := histogram(ch.Pix)                                             // histogram data
-			peaks := Peaks(m, 3, 1, 2)                                               // only find 2 peaks
-			ks, _ := tu8i.Map2KVs(peaks, func(i, j byte) bool { return i > j }, nil) // desc, most background value at the first
-			chPeaks = append(chPeaks, ks)
-		}
-		record.AddPtInfo(roi.X, roi.Y, chPeaks[iGray], chPeaks[iRed], chPeaks[iGreen], chPeaks[iBlue])
+		f := feature(roi.data)
+		above, below, left, right := f[0], f[1], f[2], f[3]
+		record.AddPtInfo(roi.pt.X, roi.pt.Y, above, below, left, right)
 	}
 	record.Log(cfgEdge)
 }
 
 func NextKeyPoints(imgPath, cfgEdge, nextRecordName string) (centres []image.Point) {
 
+	img := loadImg(imgPath)
 	edge := LoadLastRecord(cfgEdge)
-
-	dYs := []float64{}
-
-	// selected := searchNextROI(imgPath, cfgEdge)
 	selected := nextROICandidates(imgPath, cfgEdge)
+
+	pts4all := []ROICandidate{}
 
 	for _, roi := range selected {
 
-		// fmt.Println(roi.X, roi.Y)
-		// fmt.Println(roi.diff)
+		pts4each := []ROICandidate{}
 
-		// gray := Cvt2Gray(roi.data)
-		r, _, _, _ := SplitRGBA(roi.data) // [red] channel is better than [gray]
-
-		ptr := GrayStripeV(r, roiRadius)
-		_, _, yDown := maxSlope(ptr, 9, 2)
-		// fmt.Println(yMax, yUp, yDown)
-
-		centre := image.Point{
-			X: roi.X,
-			Y: roi.Y - roiRadius + yDown,
-		}
-		centres = append(centres, centre)
-
-		// record diff of previous & current centre Y
+		// looking for edge config
 		for _, pt := range edge.Pts {
-			if roi.X == pt.X {
-				dYs = append(dYs, math.Abs(float64(centre.Y)-float64(pt.Y)))
-			}
-		}
-	}
 
-	/// remove unqualified points
-	sum := 0.0
-	for _, dY := range dYs {
-		sum += dY
-	}
-	ave := sum / float64(len(selected))
+			// refer to suitable config roi
+			if roi.pt.X == pt.X {
 
-	fmt.Println("dYs:", dYs)
-	fmt.Println("dy ave:", ave)
-	fmt.Println(centres)
+				// gray := Cvt2Gray(roi.data)
+				r, _, _, _ := SplitRGBA(roi.data) // choose [red] channel for slope
+				ptr := GrayStripeV(r, roiRadius)
+				ps := slope(ptr, slopeStep, 0)
 
-	rmIndices := []int{}
-	for i, dY := range dYs {
-		if dY > 2*ave { // *** if dY value is more than 2 * ave, get rid of it ***
-			rmIndices = append(rmIndices, i)
-		}
-	}
+				// if pt.ValAbove < pt.ValBelow {
+				// 	// up -> down : dark -> bright
+				// 	for _, s := range ps[:5] {
 
-	///////////////////////////////////////////////////
+				// 		y := roi.Y - roiRadius + s
+				// 		roi := ROIgrayV2(img, pt.X, y, roiRadius)
+				// 		f := feature(roi)
+				// 		above, below := f[0], f[1]
 
-	qaCentres := []image.Point{}
-	for i, c := range centres {
-		if ti.NotIn(i, rmIndices...) {
-			qaCentres = append(qaCentres, c)
-		}
-	}
+				// 		if math.Abs(float64(pt.ValAbove)-float64(above)) < ERR &&
+				// 			math.Abs(float64(pt.ValBelow)-float64(below)) < ERR {
+				// 			centre := image.Point{
+				// 				X: pt.X,
+				// 				Y: y,
+				// 			}
+				// 			centres = append(centres, centre)
+				// 			// dYs = append(dYs, math.Abs(float64(centre.Y)-float64(pt.Y)))
 
-	// [centres] for drawing
-	centres = qaCentres
-	sort.SliceStable(centres, func(i, j int) bool {
-		return centres[i].Y < centres[j].Y
-	})
+				// 			continue NEXT
+				// 		}
+				// 	}
+				// }
 
-	///////////////////////////////////////////////////
+				if pt.ValAbove > pt.ValBelow {
+					// up -> down : bright -> dark
+					for i := len(ps) - 1; i >= len(ps)-5; i-- {
+						s := ps[i]
 
-	img := loadImg(imgPath)
+						y := roi.pt.Y - roiRadius + s
+						tempROI := ROIrgbaV2(img, pt.X, y, roiRadius)
+						f := feature(tempROI)
+						above, below := f[0], f[1]
 
-	qaSelected := []ROICandidate{}
-	for i, s := range selected {
-		if ti.NotIn(i, rmIndices...) {
-			qaSelected = append(qaSelected, s)
-		} else {
-			for _, pt := range edge.Pts {
-				if pt.X == s.X {
-					qaSelected = append(qaSelected, ROICandidate{
-						X:    pt.X,
-						Y:    pt.Y,
-						data: ROIrgbaV2(img, pt.X, pt.Y, roiRadius),
-					})
-					break
+						if math.Abs(float64(pt.ValAbove)-float64(above)) < ERR &&
+							math.Abs(float64(pt.ValBelow)-float64(below)) < ERR {
+							pts4each = append(pts4each, ROICandidate{
+								pt: image.Point{
+									X: pt.X,
+									Y: y,
+								},
+								data: tempROI,
+								dy:   int(math.Abs(float64(y) - float64(pt.Y))),
+							})
+						}
+					}
 				}
 			}
 		}
+
+		sort.SliceStable(pts4each, func(i, j int) bool {
+			return pts4each[i].dy < pts4each[j].dy
+		})
+
+		if len(pts4each) > 0 {
+			wanted := pts4each[0]
+			centres = append(centres, wanted.pt)
+			pts4all = append(pts4all, ROICandidate{
+				pt:   wanted.pt,
+				data: wanted.data,
+			})
+		}
 	}
 
-	// [selected] for next config
-	selected = qaSelected
-	makeNextEdgeCfg(selected, cfgEdge, nextRecordName, imgPath)
-
-	///////////////////////////////////////////////////
-
+	// [pts4all] for next config
+	makeNextEdgeCfg(pts4all, cfgEdge, nextRecordName, imgPath)
 	return
 }

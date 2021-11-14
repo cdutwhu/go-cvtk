@@ -19,12 +19,12 @@ type EdgeRecord struct {
 	Tm       string
 	FilePath string
 	Pts      []struct {
-		X          int
-		Y          int
-		GrayPeaks  []byte
-		RedPeaks   []byte
-		GreenPeaks []byte
-		BluePeaks  []byte
+		X        int
+		Y        int
+		ValAbove byte
+		ValBelow byte
+		ValLeft  byte
+		ValRight byte
 	}
 }
 
@@ -35,10 +35,10 @@ func (r *EdgeRecord) String() (s string) {
 	for i, pt := range r.Pts {
 		s += fmt.Sprintf("%d:", i)
 		s += fmt.Sprintln(" X:", pt.X, " Y:", pt.Y)
-		s += fmt.Sprintln(" -- GrayPeaks: ", pt.GrayPeaks)
-		s += fmt.Sprintln(" -- RedPeaks:  ", pt.RedPeaks)
-		s += fmt.Sprintln(" -- GreenPeaks:", pt.GreenPeaks)
-		s += fmt.Sprintln(" -- BluePeaks: ", pt.BluePeaks)
+		s += fmt.Sprintln(" -- Above Value: ", pt.ValAbove)
+		s += fmt.Sprintln(" -- Below Value:  ", pt.ValBelow)
+		s += fmt.Sprintln(" -- Left Value:", pt.ValLeft)
+		s += fmt.Sprintln(" -- Right Value: ", pt.ValRight)
 	}
 	return
 }
@@ -84,23 +84,23 @@ func (r *EdgeRecord) Points() (points []image.Point) {
 	return
 }
 
-func (r *EdgeRecord) AddPtInfo(x, y int, grayPeaks, rPeaks, gPeaks, bPeaks []byte) {
+func (r *EdgeRecord) AddPtInfo(x, y int, valAbove, valBelow, valLeft, valRight byte) {
 	r.Pts = append(
 		r.Pts,
 		struct {
-			X          int
-			Y          int
-			GrayPeaks  []byte
-			RedPeaks   []byte
-			GreenPeaks []byte
-			BluePeaks  []byte
+			X        int
+			Y        int
+			ValAbove byte
+			ValBelow byte
+			ValLeft  byte
+			ValRight byte
 		}{
-			X:          x,
-			Y:          y,
-			GrayPeaks:  grayPeaks,
-			RedPeaks:   rPeaks,
-			GreenPeaks: gPeaks,
-			BluePeaks:  bPeaks,
+			X:        x,
+			Y:        y,
+			ValAbove: valAbove,
+			ValBelow: valBelow,
+			ValLeft:  valLeft,
+			ValRight: valRight,
 		})
 }
 

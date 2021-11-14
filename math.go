@@ -262,10 +262,8 @@ func Bottoms(data map[byte]int, halfstep, nSmooth, n int) map[byte]int {
 	return mp
 }
 
-// return position of max-up-down, max-up, max-down
-func maxSlope(data []int, step, nSmooth int) (max, up, down int) {
-
-	max, up, down = -1, -1, -1
+// return positions of max-up to max-down
+func slope(data []int, step, nSmooth int) (sp []int) {
 
 	for i := 0; i < nSmooth; i++ {
 		data = smooth(data)
@@ -292,19 +290,8 @@ func maxSlope(data []int, step, nSmooth int) (max, up, down int) {
 		return slope[i].dy > slope[j].dy
 	})
 
-	if slope[0].dy > 0 {
-		up = slope[0].ix
+	for _, s := range slope {
+		sp = append(sp, s.ix)
 	}
-
-	if slope[len(slope)-1].dy < 0 {
-		down = slope[len(slope)-1].ix
-	}
-
-	if up >= abs(down) {
-		max = up
-	} else {
-		max = down
-	}
-
 	return
 }

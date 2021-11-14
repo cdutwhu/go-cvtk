@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -69,39 +70,32 @@ func Test_minabs(t *testing.T) {
 	}
 }
 
-func Test_maxSlope(t *testing.T) {
+func Test_slope(t *testing.T) {
 	type args struct {
 		data    []int
 		step    int
 		nSmooth int
 	}
 	tests := []struct {
-		name      string
-		args      args
-		wantXMax  int
-		wantXUp   int
-		wantXDown int
+		name   string
+		args   args
+		wantSp []int
 	}{
 		// TODO: Add test cases.
 		{
 			name: "",
 			args: args{
-				data:    []int{1, 2, 4, 5, 6, 9, 10, 3, 8, 8},
+				data:    []int{1, 2, 4, 5, 6, 9, 20, 10, 3, 8, 8},
 				step:    3,
 				nSmooth: 1,
 			},
-			wantXUp:   8,
-			wantXDown: 6,
+			wantSp: []int{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotXMax, gotXUp, gotXDown := maxSlope(tt.args.data, tt.args.step, tt.args.nSmooth)
-			if gotXUp != tt.wantXUp {
-				t.Errorf("maxSlope() gotXMax = %v, gotXUp = %v, want %v", gotXMax, gotXUp, tt.wantXUp)
-			}
-			if gotXDown != tt.wantXDown {
-				t.Errorf("maxSlope() gotXMax = %v, gotXDown = %v, want %v", gotXMax, gotXDown, tt.wantXDown)
+			if gotSp := slope(tt.args.data, tt.args.step, tt.args.nSmooth); !reflect.DeepEqual(gotSp, tt.wantSp) {
+				t.Errorf("slope() = %v, want %v", gotSp, tt.wantSp)
 			}
 		})
 	}

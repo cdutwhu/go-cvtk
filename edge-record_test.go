@@ -10,18 +10,18 @@ func TestEdgeRecord(t *testing.T) {
 	record.AddPtInfo(
 		100,
 		100,
-		[]byte{100, 200},
-		[]byte{34, 5, 6},
-		[]byte{12},
-		[]byte{44, 23},
+		100,
+		34,
+		12,
+		44,
 	)
 	record.AddPtInfo(
 		200,
 		200,
-		[]byte{100, 200},
-		[]byte{34, 5, 6},
-		[]byte{12},
-		[]byte{44, 23},
+		200,
+		3,
+		12,
+		44,
 	)
 	record.Log("./out/AB-edge.json")
 }
@@ -29,5 +29,6 @@ func TestEdgeRecord(t *testing.T) {
 func TestLoadEdgeRecord1(t *testing.T) {
 	edge := LoadLastRecord("./cfg/AB-edge.json")
 	fmt.Println(edge)
-	fmt.Println(edge.Pts[0].GreenPeaks[0])
+	fmt.Println(edge.Pts[0].ValAbove)
+	fmt.Println(edge.Pts[0].ValBelow)
 }
